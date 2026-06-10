@@ -1,0 +1,124 @@
+{
+  "errors": {
+    "ERR_CHECKIN_CLOSED": {
+      "code": "ERR_CHECKIN_CLOSED",
+      "message": "check-in not available yet",
+      "severity": "warning",
+      "recoverable": false,
+      "requiresManualIntervention": false,
+      "userMessage": "El check-in aún no está disponible para este vuelo"
+    },
+    "ERR_INVALID_DATA": {
+      "code": "ERR_INVALID_DATA",
+      "message": "invalid passenger data",
+      "severity": "error",
+      "recoverable": false,
+      "requiresManualIntervention": true,
+      "userMessage": "Los datos del pasajero son incorrectos o están incompletos"
+    },
+    "ERR_NETWORK": {
+      "code": "ERR_NETWORK",
+      "message": "network connection failed",
+      "severity": "error",
+      "recoverable": true,
+      "requiresManualIntervention": false,
+      "userMessage": "Error de conexión a Internet, se reintentará automáticamente"
+    },
+    "ERR_TIMEOUT": {
+      "code": "ERR_TIMEOUT",
+      "message": "operation timeout",
+      "severity": "error",
+      "recoverable": true,
+      "requiresManualIntervention": false,
+      "userMessage": "La operación tardó demasiado, se reintentará automáticamente"
+    },
+    "ERR_DOM_CHANGED": {
+      "code": "ERR_DOM_CHANGED",
+      "message": "page structure changed",
+      "severity": "critical",
+      "recoverable": false,
+      "requiresManualIntervention": true,
+      "userMessage": "El sitio web cambió su estructura, contacte a soporte técnico"
+    },
+    "ERR_CAPTCHA": {
+      "code": "ERR_CAPTCHA",
+      "message": "captcha detected",
+      "severity": "warning",
+      "recoverable": false,
+      "requiresManualIntervention": true,
+      "userMessage": "Se detectó un CAPTCHA, requiere intervención manual"
+    },
+    "ERR_DOWNLOAD_FAILED": {
+      "code": "ERR_DOWNLOAD_FAILED",
+      "message": "boarding pass download failed",
+      "severity": "error",
+      "recoverable": true,
+      "requiresManualIntervention": false,
+      "userMessage": "No se pudo descargar el pasabordo, se reintentará"
+    },
+    "ERR_PDF_INVALID": {
+      "code": "ERR_PDF_INVALID",
+      "message": "downloaded file is not a valid PDF",
+      "severity": "error",
+      "recoverable": false,
+      "requiresManualIntervention": true,
+      "userMessage": "El archivo descargado no es un PDF válido"
+    },
+    "ERR_RESERVATION_NOT_FOUND": {
+      "code": "ERR_RESERVATION_NOT_FOUND",
+      "message": "reservation not found",
+      "severity": "error",
+      "recoverable": false,
+      "requiresManualIntervention": true,
+      "userMessage": "No se encontró la reserva con el código proporcionado"
+    },
+    "ERR_ALREADY_CHECKED_IN": {
+      "code": "ERR_ALREADY_CHECKED_IN",
+      "message": "passenger already checked in",
+      "severity": "info",
+      "recoverable": false,
+      "requiresManualIntervention": false,
+      "userMessage": "El pasajero ya tiene check-in realizado previamente"
+    },
+    "ERR_SEAT_UNAVAILABLE": {
+      "code": "ERR_SEAT_UNAVAILABLE",
+      "message": "preferred seat not available",
+      "severity": "warning",
+      "recoverable": true,
+      "requiresManualIntervention": false,
+      "userMessage": "El asiento preferido no está disponible, se asignará automáticamente"
+    },
+    "ERR_REQUIRES_DOCUMENTS": {
+      "code": "ERR_REQUIRES_DOCUMENTS",
+      "message": "additional documents required",
+      "severity": "warning",
+      "recoverable": false,
+      "requiresManualIntervention": true,
+      "userMessage": "Se requieren documentos adicionales, complete manualmente"
+    },
+    "ERR_PAYMENT_REQUIRED": {
+      "code": "ERR_PAYMENT_REQUIRED",
+      "message": "payment required for check-in",
+      "severity": "warning",
+      "recoverable": false,
+      "requiresManualIntervention": true,
+      "userMessage": "El check-in requiere un pago adicional, procese manualmente"
+    },
+    "ERR_FLIGHT_CANCELLED": {
+      "code": "ERR_FLIGHT_CANCELLED",
+      "message": "flight cancelled",
+      "severity": "critical",
+      "recoverable": false,
+      "requiresManualIntervention": true,
+      "userMessage": "El vuelo ha sido cancelado"
+    },
+    "ERR_UNKNOWN": {
+      "code": "ERR_UNKNOWN",
+      "message": "unknown error occurred",
+      "severity": "error",
+      "recoverable": true,
+      "requiresManualIntervention": false,
+      "userMessage": "Ocurrió un error desconocido, se reintentará"
+    }
+  }
+}

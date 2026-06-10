@@ -1,0 +1,61 @@
+{
+  "browser": {
+    "headless": false,
+    "slowMo": 0,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "downloadPath": "./boarding_passes"
+  },
+  "timeout": {
+    "default": 60000,
+    "navigation": 30000,
+    "download": 120000,
+    "element": 10000
+  },
+  "retry": {
+    "maxAttempts": 3,
+    "backoff": {
+      "initial": 1000,
+      "multiplier": 2,
+      "max": 8000
+    }
+  },
+  "processing": {
+    "delayBetweenPassengers": 2000,
+    "screenshotOnError": true,
+    "screenshotOnSuccess": false
+  },
+  "csv": {
+    "encoding": "utf-8",
+    "delimiter": ",",
+    "backup": false,
+    "incrementalSave": true
+  },
+  "pdf": {
+    "watermark": {
+      "enabled": true,
+      "text": "CHECK-IN REALIZADO",
+      "fontSize": 14,
+      "color": {
+        "r": 0,
+        "g": 0.5,
+        "b": 0
+      },
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "backup": false
+  },
+  "logging": {
+    "level": "info",
+    "console": true,
+    "file": true,
+    "maxFiles": 10,
+    "maxSize": "10m"
+  }
+}

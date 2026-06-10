@@ -1,0 +1,86 @@
+{
+  "avianca": {
+    "name": "Avianca",
+    "code": "avianca",
+    "enabled": true,
+    "checkInUrl": "https://checkinnew.avianca.com/Check-In?lang=Es",
+    "timeout": 90000,
+    "selectors": {
+      "reservationInput": "input[formcontrolname='reservationNumber']",
+      "lastNameInput": "input[formcontrolname='lastNames']",
+      "submitButton": "button.button-submit",
+      "passengerConfirm": "button:has-text('Confirmar'), button:has-text('Continuar')",
+      "seatSelect": ".seat-map, .seat-selection",
+      "downloadButton": "button:has-text('Descargar'), a:has-text('Boarding Pass')",
+      "errorMessage": ".help-text:not(.error-none), .error-message, .alert-danger, [role='alert'], .form-error"
+    },
+    "delays": {
+      "afterNavigation": 1000,
+      "afterFormSubmit": 1000,
+      "beforeSeatSelection": 1000,
+      "beforeDownload": 1000
+    },
+    "features": {
+      "seatSelection": true,
+      "requiresEmail": false,
+      "requiresBirthDate": false,
+      "multiplePaxSameReservation": true
+    }
+  },
+  "copa": {
+    "name": "Copa Airlines",
+    "code": "copa",
+    "enabled": false,
+    "checkInUrl": "https://www.copaair.com/es/web-check-in/",
+    "timeout": 90000,
+    "selectors": {
+      "reservationInput": "input#confirmationCode",
+      "lastNameInput": "input#lastName",
+      "submitButton": "button#submitButton",
+      "passengerConfirm": "button.continue-button",
+      "seatSelect": ".seat-selection-container",
+      "downloadButton": "button.download-boarding-pass",
+      "errorMessage": ".error-container"
+    },
+    "delays": {
+      "afterNavigation": 5000,
+      "afterFormSubmit": 5000,
+      "beforeSeatSelection": 5000,
+      "beforeDownload": 5000
+    },
+    "features": {
+      "seatSelection": true,
+      "requiresEmail": true,
+      "requiresBirthDate": false,
+      "multiplePaxSameReservation": true
+    }
+  },
+  "satena": {
+    "name": "Satena",
+    "code": "satena",
+    "enabled": false,
+    "checkInUrl": "https://www.satena.com/check-in/",
+    "timeout": 60000,
+    "selectors": {
+      "reservationInput": "input[name='codigoReserva']",
+      "lastNameInput": "input[name='apellido']",
+      "submitButton": "button.btn-checkin",
+      "passengerConfirm": "button.confirmar",
+      "seatSelect": ".asientos",
+      "downloadButton": "a.descargar-pase",
+      "errorMessage": ".mensaje-error"
+    },
+    "delays": {
+      "afterNavigation": 5000,
+      "afterFormSubmit": 5000,
+      "beforeSeatSelection": 5000,
+      "beforeDownload": 5000
+    },
+    "features": {
+      "seatSelection": false,
+      "requiresEmail": false,
+      "requiresBirthDate": true,
+      "multiplePaxSameReservation": false
+    }
+  }
+}

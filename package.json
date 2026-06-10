@@ -1,0 +1,44 @@
+{
+  "name": "checkin-bot",
+  "version": "1.0.0",
+  "description": "Sistema de automatización de check-in para aerolíneas",
+  "main": "bot/main.js",
+  "scripts": {
+    "start": "node bot/main.js",
+    "dev": "npm run setup:testing && npm start",
+    "install-browsers": "playwright install chromium",
+    "setup": "npm run install-browsers && npm run setup:testing",
+    "setup:testing": "node -e \"require('fs').writeFileSync('.env', 'LOG_LEVEL=info\\nLOG_CONSOLE=true\\nBROWSER_SLOW_MO=1000\\nBROWSER_HEADLESS=false\\nDEFAULT_TIMEOUT=120000\\nMAX_RETRIES=3\\nDELAY_BETWEEN_PASSENGERS=10000\\nNODE_ENV=development')\" && echo \"✓ Modo TESTING activado (delays de 1s)\"",
+    "setup:prod": "node -e \"require('fs').writeFileSync('.env', 'LOG_LEVEL=info\\nLOG_CONSOLE=true\\nBROWSER_SLOW_MO=0\\nBROWSER_HEADLESS=false\\nDEFAULT_TIMEOUT=60000\\nMAX_RETRIES=3\\nDELAY_BETWEEN_PASSENGERS=2000\\nNODE_ENV=production')\" && echo \"✓ Modo PRODUCCIÓN activado (máxima velocidad)\"",
+    "logs": "tail -f logs/app.log",
+    "logs:errors": "tail -f logs/errors.log",
+    "clean:logs": "rm -rf logs/*.log logs/screenshots/*.png",
+    "clean:pdfs": "rm -rf boarding_passes/**/*.pdf",
+    "clean": "npm run clean:logs && npm run clean:pdfs",
+    "test": "echo \"Tests not implemented yet\" && exit 0"
+  },
+  "keywords": [
+    "automation",
+    "check-in",
+    "airlines",
+    "playwright"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "csv-parse": "^5.5.0",
+    "csv-stringify": "^6.4.0",
+    "dotenv": "^16.3.1",
+    "joi": "^17.11.0",
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.40.0",
+    "playwright-extra": "^4.3.6",
+    "proper-lockfile": "^4.1.2",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "winston": "^3.11.0"
+  }
+}

@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/*.log
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+
+# Boarding passes (PDFs descargados)
+boarding_passes/**/*.pdf
+
+# CSV backups
+*.backup.csv
+passengers.csv.lock
+
+# Playwright
+.playwright/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+temp/

@@ -12,6 +12,13 @@ npm-debug.log*
 
 # Boarding passes (PDFs descargados)
 boarding_passes/**/*.pdf
+boarding_passes/copa/**
+
+# Skyvern bot logs
+logs/skyvern-*.log
+
+# Skyvern bot local env
+skyvern-bot/.env
 
 # CSV backups
 *.backup.csv

@@ -5,6 +5,10 @@
   "main": "bot/main.js",
   "scripts": {
     "start": "node bot/main.js",
+    "start:skyvern": "node skyvern-bot/main.js",
+    "dev:skyvern": "node skyvern-bot/main.js",
+    "skyvern:workflows": "node skyvern-bot/scripts/list-workflows.js",
+    "start:avianca": "node bot/main.js",
     "dev": "npm run setup:testing && npm start",
     "install-browsers": "playwright install chromium",
     "setup": "npm run install-browsers && npm run setup:testing",

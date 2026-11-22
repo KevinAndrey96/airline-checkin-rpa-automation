@@ -18,20 +18,14 @@
 
 ## ⚠️ Problemas Encontrados y Estado
 
-### 1. Métodos Duplicados (Legacy Code) ⚠️
-**Ubicación**: `Avianca.js` líneas 590-1035
+### 1. Métodos Duplicados (Legacy Code) ✅
+**Ubicación original**: `Avianca.js` líneas 590-1035
 
-**Problema**: Hay métodos que están duplicados pero NO se usan en el flujo principal:
-- `clickContinueButton()` (línea 590) - ✅ Ya está en `AviancaNavigator.js` y se usa desde ahí
-- `acceptBaggagePolicies()` (línea 723) - ✅ Ya está en `AviancaNavigator.js` y se usa desde ahí
-- `checkForAviancaErrors()` (línea 775) - ✅ Ya está en `AviancaValidator.js` y se usa desde ahí
-- `waitForPassengerConfirmation()` (línea 833) - ⚠️ No se usa en ningún lugar
-- `handleSeatSelection()` (línea 889) - ⚠️ No se usa (comentado en flujo)
-- `downloadBoardingPass()` (línea 963) - ⚠️ No se usa (comentado en flujo)
-
-**Estado**: Los métodos están duplicados pero NO causan problemas porque el flujo principal usa los métodos de los módulos especializados. Sin embargo, deberían eliminarse en una futura limpieza para evitar confusión.
-
-**Recomendación**: Mantener por ahora (no causan problemas), pero documentar como código legacy para futura eliminación.
+**Estado**: ✅ Eliminados y refactorizados. Todo el flujo de navegación, errores y acordeones utiliza los módulos especializados:
+- `AviancaNavigator.js`
+- `AviancaFormFiller.js`
+- `AviancaValidator.js`
+- `AviancaAccordionHandler.js`
 
 ### 2. Código Comentado
 **Ubicación**: `Avianca.js` líneas 448-454

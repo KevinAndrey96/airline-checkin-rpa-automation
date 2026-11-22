@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  checkin-rpa:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airline-checkin-rpa
+    environment:
+      - NODE_ENV=production
+      - BROWSER_HEADLESS=true
+      - BROWSER_SLOW_MO=0
+      - LOG_LEVEL=info
+      - LOG_CONSOLE=true
+      - DEFAULT_TIMEOUT=60000
+      - MAX_RETRIES=3
+      - DELAY_BETWEEN_PASSENGERS=2000
+    volumes:
+      - ./passengers.csv:/app/passengers.csv
+      - ./boarding_passes:/app/boarding_passes
+      - ./logs:/app/logs
+    restart: "no"

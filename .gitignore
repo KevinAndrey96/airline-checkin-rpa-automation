@@ -1,31 +1,30 @@
-# Node modules
+# Dependencies
 node_modules/
 
-# Logs
-logs/*.log
+# Logs and runtime screenshots
+logs/*
+!logs/.gitkeep
 *.log
 npm-debug.log*
 
 # Environment variables
 .env
-.env.local
-
-# Boarding passes (PDFs descargados)
-boarding_passes/**/*.pdf
-boarding_passes/copa/**
-
-# Skyvern bot logs
-logs/skyvern-*.log
-
-# Skyvern bot local env
+.env.*
+!.env.example
 skyvern-bot/.env
+!skyvern-bot/.env.example
 
-# CSV backups
+# Generated boarding passes (PDFs and screenshots)
+boarding_passes/*
+!boarding_passes/.gitkeep
+
+# CSV backups and lockfiles
 *.backup.csv
 passengers.csv.lock
 
-# Playwright
+# Playwright & test artifacts
 .playwright/
+test-results/
 
 # OS files
 .DS_Store

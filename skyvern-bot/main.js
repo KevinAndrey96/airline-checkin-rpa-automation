@@ -45,7 +45,7 @@ class SkyvernCheckInBot {
       });
 
       if (processable.length === 0) {
-        logger.warn("no copa passengers to process — add rows with airline=copa in passengers.csv");
+        logger.warn("no copa passengers to process (add rows with airline=copa in passengers.csv)");
         return;
       }
 
@@ -108,7 +108,7 @@ class SkyvernCheckInBot {
 
   printSummary() {
     console.log("\n═══════════════════════════════════════════════════════");
-    console.log("  RESUMEN — Skyvern Bot (Copa Airlines)");
+    console.log("  RESUMEN: Skyvern Bot (Copa Airlines)");
     console.log("═══════════════════════════════════════════════════════");
     console.log(`  Pasajeros Copa:          ${this.summary.total}`);
     console.log(`  ✓ Exitosos:              ${this.summary.success}`);

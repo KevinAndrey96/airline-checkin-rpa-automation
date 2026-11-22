@@ -1,7 +1,7 @@
 {
-  "name": "checkin-bot",
+  "name": "airline-checkin-rpa-automation",
   "version": "1.0.0",
-  "description": "Sistema de automatización de check-in para aerolíneas",
+  "description": "Enterprise-grade RPA automation engine for bulk airline check-ins and boarding pass retrieval using Playwright Stealth and Skyvern AI workflows.",
   "main": "bot/main.js",
   "scripts": {
     "start": "node bot/main.js",
@@ -19,16 +19,20 @@
     "clean:logs": "rm -rf logs/*.log logs/screenshots/*.png",
     "clean:pdfs": "rm -rf boarding_passes/**/*.pdf",
     "clean": "npm run clean:logs && npm run clean:pdfs",
-    "test": "echo \"Tests not implemented yet\" && exit 0"
+    "test": "node --test test/**/*.test.js"
   },
   "keywords": [
     "automation",
     "check-in",
     "airlines",
-    "playwright"
+    "playwright",
+    "stealth",
+    "rpa",
+    "skyvern",
+    "travel-agency"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Kevin Andrey Herrera Silva <kahs_kevin@hotmail.com>",
+  "license": "MIT",
   "engines": {
     "node": ">=20.0.0"
   },

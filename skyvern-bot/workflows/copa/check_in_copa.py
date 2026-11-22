@@ -1,5 +1,5 @@
 """
-Copa Airlines web check-in — Skyvern code workflow.
+Copa Airlines web check-in: Skyvern code workflow.
 
 Publicar en Skyvern UI (Workflows → Code) o re-importar tras editar.
 Luego copiar el workflow_permanent_id (wpid_...) a skyvern-bot/.env:

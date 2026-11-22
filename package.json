@@ -19,7 +19,7 @@
     "clean:logs": "rm -rf logs/*.log logs/screenshots/*.png",
     "clean:pdfs": "rm -rf boarding_passes/**/*.pdf",
     "clean": "npm run clean:logs && npm run clean:pdfs",
-    "test": "node --test test/**/*.test.js"
+    "test": "node --test"
   },
   "keywords": [
     "automation",

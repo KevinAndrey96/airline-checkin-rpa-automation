@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Check-in de prueba</title>
+    <style>
+      body { font-family: sans-serif; max-width: 720px; margin: 2rem auto; }
+      mat-select, mat-option { display: block; border: 1px solid #999; padding: 0.4rem; margin: 0.2rem 0; cursor: pointer; }
+      mat-expansion-panel { display: block; border: 1px solid #ccc; margin: 0.5rem 0; padding: 0.5rem; }
+      mat-expansion-panel-header { display: block; font-weight: bold; cursor: pointer; }
+      mat-error { display: block; color: #b00020; }
+      #overlay { position: fixed; top: 1rem; right: 1rem; background: #fff; }
+      [role="dialog"] { position: fixed; inset: 30% 20%; background: #fff; border: 2px solid #333; padding: 1rem; }
+    </style>
+  </head>
+  <body>
+    <section id="search">
+      <h1>Check-in</h1>
+      <input formcontrolname="reservationNumber" placeholder="Código de reserva" />
+      <input formcontrolname="lastNames" placeholder="Apellidos" />
+      <button class="button-submit" type="button">Buscar</button>
+      <p class="error-message" hidden></p>
+    </section>
+
+    <section id="trips" hidden>
+      <h2>Tus viajes</h2>
+      <p id="trip-status"></p>
+      <button id="start" type="button" hidden>Empezar check-in</button>
+      <button id="view" type="button" hidden>Ver pasabordos</button>
+    </section>
+
+    <section id="contact" hidden>
+      <h2>Selecciona los pasajeros</h2>
+      <input type="email" formcontrolname="email" />
+      <input type="text" class="phone-number-input" placeholder="Número de teléfono" />
+      <button id="continue" type="button">Continuar</button>
+    </section>
+
+    <section id="baggage" hidden>
+      <h2>Equipaje seguro</h2>
+      <button type="button" id="accept">Aceptar y continuar</button>
+    </section>
+
+    <section id="details" hidden>
+      <mat-expansion-panel data-panel="personal">
+        <mat-expansion-panel-header aria-expanded="false">Datos personales</mat-expansion-panel-header>
+        <div class="body" hidden>
+          <mat-select formcontrolname="gender" data-options="Femenino|Masculino|Sin especificar">Género</mat-select>
+          <input formcontrolname="countryResidence" data-options="Colombia|Chile|Ecuador|Estados Unidos" />
+          <mat-select formcontrolname="purposeOfVisit" data-options="Turismo, vacaciones, placer|Negocios|Estudios|Tránsito">Propósito</mat-select>
+          <input formcontrolname="birthDate" placeholder="dd/mm/aaaa" />
+          <button type="button" class="submit">Guardar y continuar</button>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel data-panel="document">
+        <mat-expansion-panel-header aria-expanded="false">Documento de viaje</mat-expansion-panel-header>
+        <div class="body" hidden>
+          <mat-select formcontrolname="documentType" data-options="Pasaporte|Cédula de ciudadanía|Cédula de extranjería|Tarjeta de identidad">Tipo de documento</mat-select>
+          <input formcontrolname="documentNumber" />
+          <input formcontrolname="documentName" />
+          <input formcontrolname="documentSurname" />
+          <input formcontrolname="nationality" data-options="Colombia|Chile|Ecuador" />
+          <input formcontrolname="issuingCountry" data-options="Colombia|Chile|Ecuador" />
+          <input formcontrolname="expiryDate" placeholder="dd/mm/aaaa" />
+          <button type="button" class="submit">Guardar y continuar</button>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel data-panel="emergency">
+        <mat-expansion-panel-header aria-expanded="false">Contacto de emergencia</mat-expansion-panel-header>
+        <div class="body" hidden>
+          <input formcontrolname="name" />
+          <input formcontrolname="phoneCountryCode" data-options="+57 Colombia|+1 Estados Unidos|+593 Ecuador" data-value-pattern="^\S+" />
+          <input formcontrolname="number" />
+          <input formcontrolname="countryCode" data-options="Colombia|Chile|Ecuador" />
+          <button type="button" class="submit">Guardar y continuar</button>
+        </div>
+      </mat-expansion-panel>
+    </section>
+
+    <div id="seats" role="dialog" hidden>
+      <p>Elige tu silla</p>
+      <button type="button" aria-label="Cerrar">×</button>
+    </div>
+
+    <section id="pass" class="boarding-pass" hidden>
+      <h1>Tu pasabordo</h1>
+      <p id="pax"></p>
+      <button type="button" class="back">Volver</button>
+    </section>
+
+    <div id="overlay"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

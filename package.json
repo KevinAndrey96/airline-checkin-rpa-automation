@@ -1,52 +1,61 @@
 {
-  "name": "airline-checkin-rpa-automation",
-  "version": "1.0.0",
-  "description": "Enterprise-grade RPA automation engine for bulk airline check-ins and boarding pass retrieval using Playwright Stealth and Skyvern AI workflows.",
-  "main": "bot/main.js",
-  "scripts": {
-    "start": "node bot/main.js",
-    "start:skyvern": "node skyvern-bot/main.js",
-    "dev:skyvern": "node skyvern-bot/main.js",
-    "skyvern:workflows": "node skyvern-bot/scripts/list-workflows.js",
-    "start:avianca": "node bot/main.js",
-    "dev": "npm run setup:testing && npm start",
-    "install-browsers": "playwright install chromium",
-    "setup": "npm run install-browsers && npm run setup:testing",
-    "setup:testing": "node -e \"require('fs').writeFileSync('.env', 'LOG_LEVEL=info\\nLOG_CONSOLE=true\\nBROWSER_SLOW_MO=1000\\nBROWSER_HEADLESS=false\\nDEFAULT_TIMEOUT=120000\\nMAX_RETRIES=3\\nDELAY_BETWEEN_PASSENGERS=10000\\nNODE_ENV=development')\" && echo \"✓ Modo TESTING activado (delays de 1s)\"",
-    "setup:prod": "node -e \"require('fs').writeFileSync('.env', 'LOG_LEVEL=info\\nLOG_CONSOLE=true\\nBROWSER_SLOW_MO=0\\nBROWSER_HEADLESS=false\\nDEFAULT_TIMEOUT=60000\\nMAX_RETRIES=3\\nDELAY_BETWEEN_PASSENGERS=2000\\nNODE_ENV=production')\" && echo \"✓ Modo PRODUCCIÓN activado (máxima velocidad)\"",
-    "logs": "tail -f logs/app.log",
-    "logs:errors": "tail -f logs/errors.log",
-    "clean:logs": "rm -rf logs/*.log logs/screenshots/*.png",
-    "clean:pdfs": "rm -rf boarding_passes/**/*.pdf",
-    "clean": "npm run clean:logs && npm run clean:pdfs",
-    "test": "node --test"
-  },
+  "name": "typescript-playwright-airline-checkin-rpa",
+  "version": "2.0.0",
+  "description": "Automatización RPA del check-in web de aerolíneas para agencias de viajes: Playwright para Avianca y Skyvern para Copa, con manifiesto CSV validado y pasabordos organizados.",
   "keywords": [
-    "automation",
-    "check-in",
-    "airlines",
-    "playwright",
-    "stealth",
     "rpa",
+    "playwright",
+    "check-in",
+    "avianca",
+    "copa-airlines",
     "skyvern",
-    "travel-agency"
+    "agencia-de-viajes",
+    "automatizacion",
+    "typescript"
   ],
-  "author": "Kevin Andrey Herrera Silva <kahs_kevin@hotmail.com>",
+  "homepage": "https://github.com/KevinAndrey96/typescript-playwright-airline-checkin-rpa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KevinAndrey96/typescript-playwright-airline-checkin-rpa.git"
+  },
   "license": "MIT",
+  "author": "Kevin Andrey Herrera Silva <kahs_kevin@hotmail.com>",
+  "type": "module",
+  "bin": {
+    "checkin": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --project unit",
+    "test:e2e": "vitest run --project e2e",
+    "check": "npm run lint && npm run typecheck && npm test && npm run test:e2e"
   },
   "dependencies": {
-    "chalk": "^4.1.2",
-    "csv-parse": "^5.5.0",
-    "csv-stringify": "^6.4.0",
-    "dotenv": "^16.3.1",
-    "joi": "^17.11.0",
-    "pdf-lib": "^1.17.1",
-    "playwright": "^1.40.0",
-    "playwright-extra": "^4.3.6",
+    "csv-parse": "^7.0.3",
+    "csv-stringify": "^6.9.0",
+    "pino": "^10.4.0",
+    "playwright": "1.65.1",
     "proper-lockfile": "^4.1.2",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "winston": "^3.11.0"
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.4",
+    "@types/proper-lockfile": "^4.1.4",
+    "eslint": "^10.15.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.74.0",
+    "vitest": "^5.1.2"
   }
 }

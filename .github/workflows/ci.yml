@@ -2,35 +2,66 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
 
 jobs:
-  test:
-    name: Node.js Test Suite
+  quality:
+    name: Calidad (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [20.x, 22.x]
-
+        node: ["22", "24"]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
 
-      - name: Install dependencies
-        run: npm ci
+  e2e:
+    name: Check-in de punta a punta con Chromium
+    runs-on: ubuntu-latest
+    needs: quality
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
 
-      - name: Run test suite
-        run: npm test
-
-      - name: Validate syntax
-        run: |
-          node --check bot/main.js
-          node --check skyvern-bot/main.js
+  docker:
+    name: Imagen Docker
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker build -t airline-checkin-rpa .
+      - name: Validar el manifiesto de ejemplo dentro de la imagen
+        run: docker run --rm airline-checkin-rpa validate --manifest examples/passengers.example.csv
+      - name: Abrir Chromium como pwuser
+        run: >-
+          docker run --rm --init --entrypoint node airline-checkin-rpa --input-type=module
+          -e "const { chromium } = await import('playwright'); const browser = await chromium.launch(); console.log('chromium', browser.version()); await browser.close();"

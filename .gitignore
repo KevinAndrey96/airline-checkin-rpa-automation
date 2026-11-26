@@ -1,42 +1,17 @@
-# Dependencies
 node_modules/
-
-# Logs and runtime screenshots
-logs/*
-!logs/.gitkeep
-*.log
-npm-debug.log*
-
-# Environment variables
+dist/
+coverage/
 .env
 .env.*
 !.env.example
-skyvern-bot/.env
-!skyvern-bot/.env.example
-
-# Generated boarding passes (PDFs and screenshots)
+data/*
+!data/.gitkeep
 boarding_passes/*
 !boarding_passes/.gitkeep
-
-# CSV backups and lockfiles
-*.backup.csv
-passengers.csv.lock
-
-# Playwright & test artifacts
-.playwright/
+*.lock
+!package-lock.json
+*.csv.tmp
 test-results/
-
-# OS files
 .DS_Store
-Thumbs.db
-desktop.ini
-
-# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-
-# Temporary files
-*.tmp
-temp/

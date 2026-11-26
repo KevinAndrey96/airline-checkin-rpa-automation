@@ -1,22 +1,17 @@
-version: "3.8"
+name: airline-checkin
 
 services:
-  checkin-rpa:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: airline-checkin-rpa
+  checkin:
+    build: .
+    image: airline-checkin-rpa:local
+    init: true
+    shm_size: 1gb
+    env_file:
+      - path: .env
+        required: false
     environment:
-      - NODE_ENV=production
-      - BROWSER_HEADLESS=true
-      - BROWSER_SLOW_MO=0
-      - LOG_LEVEL=info
-      - LOG_CONSOLE=true
-      - DEFAULT_TIMEOUT=60000
-      - MAX_RETRIES=3
-      - DELAY_BETWEEN_PASSENGERS=2000
+      BROWSER_HEADLESS: "true"
     volumes:
-      - ./passengers.csv:/app/passengers.csv
+      - ./data:/app/data
       - ./boarding_passes:/app/boarding_passes
-      - ./logs:/app/logs
-    restart: "no"
+    command: ["run"]

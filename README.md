@@ -1,229 +1,166 @@
-# Airline Check-In RPA Automation
+# Check-in automático de aerolíneas con Playwright y Skyvern (RPA para agencias de viajes)
 
-> Enterprise-grade Robotic Process Automation (RPA) and AI-driven workflow engine designed for travel agencies to automate high-volume airline check-ins and boarding pass extraction.
+[![CI](https://github.com/KevinAndrey96/typescript-playwright-airline-checkin-rpa/actions/workflows/ci.yml/badge.svg)](https://github.com/KevinAndrey96/typescript-playwright-airline-checkin-rpa/actions/workflows/ci.yml)
+![Node.js 22+](https://img.shields.io/badge/Node.js-22%20%7C%2024-339933?logo=nodedotjs&logoColor=white)
+![TypeScript estricto](https://img.shields.io/badge/TypeScript-estricto-3178C6?logo=typescript&logoColor=white)
+![Playwright 1.65](https://img.shields.io/badge/Playwright-1.65-2EAD33?logo=playwright&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-listo-2496ED?logo=docker&logoColor=white)
+[![Licencia MIT](https://img.shields.io/badge/licencia-MIT-blue)](LICENSE)
 
-[![CI](https://github.com/KevinAndrey96/airline-checkin-rpa-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/KevinAndrey96/airline-checkin-rpa-automation/actions/workflows/ci.yml)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
-[![Playwright](https://img.shields.io/badge/playwright-v1.40.0-blue.svg)](https://playwright.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+**Robot de automatización (RPA) que hace el check-in web de muchos pasajeros a partir de una hoja de cálculo** y guarda cada pasabordo con un nombre ordenado. Está pensado para agencias de viajes que todos los días abren el portal de cada aerolínea, escriben el código de reserva, llenan los datos del pasajero, esquivan ofertas y descargan pasabordos uno por uno.
 
----
+- **Avianca** con [Playwright](https://playwright.dev): el robot recorre el formulario real paso a paso (reserva, contacto, equipaje, datos personales, documento de viaje, contacto de emergencia, silla y pasabordo).
+- **Copa Airlines** con [Skyvern](https://www.skyvern.com): un agente de navegación con modelos de visión recibe los datos del pasajero y devuelve el pasabordo descargado.
 
-## Origin and Motivation
+## Qué hace
 
-In a high-volume travel agency, passenger check-in is one of the most critical yet repetitive operational bottlenecks. Travel agents frequently receive extensive manifests of passengers traveling across different airlines (such as Avianca and Copa Airlines). Manually opening each airline portal, entering reservation codes, filling passenger contact info, accepting terms, dodging upselling modals, selecting seats, and downloading individual boarding passes takes hours every single day.
+- **Manifiesto CSV validado:** cada fila es un pasajero. Antes de abrir el navegador se validan código de reserva, documento, fechas reales, correo, teléfonos y que el pasaporte tenga vencimiento. Los errores se explican en español y por columna.
+- **Estado por pasajero en el mismo archivo:** el robot escribe `PENDING`, `IN_PROGRESS`, `SUCCESS` o `ERROR`, el código del error, el número de intentos y la ruta del pasabordo. Puedes abrir el CSV en Excel para ver el avance.
+- **Reanudable:** si el proceso se corta, la siguiente ejecución retoma los pasajeros que quedaron a medias y omite los que ya tienen pasabordo.
+- **Reintentos con espera exponencial** solo para errores transitorios (página lenta, sin red, pasabordo que no cargó). Los errores que requieren a una persona (reserva inexistente, CAPTCHA, pago exigido, documentos adicionales) no se reintentan.
+- **Pasabordos ordenados:** `boarding_passes/avianca/AV123X_GOMEZ-HERRERA_ALEJANDRO.png`. Cuando algo falla queda una captura en `boarding_passes/errores/` para revisar qué vio el robot.
+- **Pasajeros ya registrados:** si el check-in ya estaba hecho, el robot abre "Ver pasabordos" y lo descarga igual.
+- **Un archivo a la vez:** el manifiesto queda bloqueado durante la ejecución y cada guardado es atómico, así dos procesos nunca escriben el mismo archivo.
 
-This project was built directly to solve that operational pain. It provides a production-ready automated check-in engine that reads passenger manifests, securely handles multi-step airline workflows, bypasses anti-bot heuristics via browser stealth, and outputs clean PDF/PNG boarding passes directly into organized agency storage.
+## Uso
 
----
-
-## Architectural Highlights
-
-The platform combines deterministic browser automation with autonomous AI agents:
-
-```
-                  +-----------------------------------+
-                  |   passengers.csv (Manifest)       |
-                  +-----------------+-----------------+
-                                    |
-                           [proper-lockfile]
-                                    v
-                  +-----------------------------------+
-                  |        CSV Manager & Engine       |
-                  |  - Schema Validation (Joi)        |
-                  |  - Concurrency Lock & Backoff     |
-                  |  - Transactional Status Updates   |
-                  +--------+-----------------+--------+
-                           |                 |
-         +-----------------+                 +------------------+
-         v                                                      v
-+-------------------------------+             +----------------------------------+
-| Playwright Stealth Core       |             | Skyvern AI Agent Core            |
-| (Avianca Adapter)             |             | (Copa Airlines Adapter)          |
-| - Multi-selector fallback     |             | - Vision-Language Web Agent      |
-| - Accordion traversal         |             | - Dynamic Form Reasoning         |
-| - Bot fingerprint evasion     |             | - Local LLM / Cloud Backend      |
-+---------------+---------------+             +-----------------+----------------+
-                |                                               |
-                +-----------------------+-----------------------+
-                                        |
-                                        v
-                  +-----------------------------------+
-                  |     Output & Audit Trail          |
-                  |  - Boarding Passes (PDF / PNG)    |
-                  |  - Structured Execution Logs      |
-                  |  - Error Screenshots              |
-                  +-----------------------------------+
-```
-
-### 1. Resilient Playwright RPA Engine
-- **Stealth Evasion**: Integrated with `puppeteer-extra-plugin-stealth` to mask automation headers, disable `navigator.webdriver`, and evade cloud anti-bot filters.
-- **Multi-Selector Fallbacks**: Airline web portals frequently deploy minor DOM updates. Every interactive element utilizes prioritized selector chains with JavaScript evaluation fallbacks.
-- **Accordion and Modal Handlers**: Gracefully handles multi-step passenger flows, contact info modals, baggage disclosures, and seat selection prompts.
-- **Artifact Pipeline**: Intercepts native downloads and applies optional watermarks using `pdf-lib`.
-
-### 2. Skyvern Vision-Language AI Workflows
-- **Autonomous Navigation**: Integrates with the Skyvern agent protocol to execute natural-language check-in tasks on complex multi-carrier interfaces (such as Copa Airlines).
-- **Self-Healing Automation**: Accommodates unanticipated UI changes through computer vision and browser action synthesis without requiring hardcoded selector updates.
-
-### 3. State Management and Fault Tolerance
-- **File Locking**: Safe multi-process execution via `proper-lockfile` preventing data corruption when multiple workers process the CSV manifest.
-- **Error Categorization**: Distinguishes between recoverable network errors (handled via exponential backoff in `RetryManager`), permanent reservation issues (e.g., invalid booking reference), and manual intervention alerts (e.g., CAPTCHA challenges).
-- **Crash Recovery**: Automatically resets interrupted `IN_PROGRESS` records to `PENDING` upon restart.
-
----
-
-## Repository Structure
-
-```
-.
-├── bot/                            # Playwright RPA engine
-│   ├── airlines/                   # Airline adapter implementations
-│   │   ├── avianca/                # Modular handlers for Avianca portal
-│   │   │   ├── AviancaAccordionHandler.js
-│   │   │   ├── AviancaFormFiller.js
-│   │   │   ├── AviancaNavigator.js
-│   │   │   └── AviancaValidator.js
-│   │   ├── AirlineFactory.js       # Adapter factory and registry
-│   │   ├── Avianca.js              # Primary Avianca check-in workflow
-│   │   └── BaseAirline.js          # Base adapter interface
-│   ├── utils/                      # Validators and screenshot utilities
-│   ├── browser.js                  # Stealth browser manager
-│   ├── config.js                   # Configuration loader
-│   ├── csv.js                      # CSV manager with proper-lockfile
-│   ├── errors.js                   # Hierarchical error system
-│   ├── logger.js                   # Winston structured logger
-│   ├── main.js                     # Main bot orchestrator
-│   ├── pdf.js                      # Boarding pass processor
-│   └── retry.js                    # Exponential backoff retry manager
-├── skyvern-bot/                    # Autonomous AI agent integration
-│   ├── airlines/copa/              # Copa Airlines Skyvern workflow
-│   ├── client/SkyvernClient.js     # Skyvern REST client
-│   └── main.js                     # Skyvern bot runner
-├── config/                         # System and airline configurations
-│   ├── airlines.json
-│   ├── default.json
-│   └── error-codes.json
-├── test/                           # Automated unit test suite
-│   ├── airline-factory.test.js
-│   ├── csv.test.js
-│   ├── errors.test.js
-│   ├── retry.test.js
-│   └── validators.test.js
-├── Dockerfile                      # Playwright container definition
-├── docker-compose.yml              # Containerized deployment orchestration
-├── passengers.example.csv          # Sample passenger manifest
-└── package.json                    # Project metadata and npm scripts
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-- Node.js 20.x or 22.x
-- npm 9+
-- Optional: Docker and Docker Compose
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/KevinAndrey96/airline-checkin-rpa-automation.git
-   cd airline-checkin-rpa-automation
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Install Playwright browser binaries:
-   ```bash
-   npm run install-browsers
-   ```
-
-4. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-
----
-
-## Manifest Configuration
-
-Populate `passengers.csv` using the schema illustrated in `passengers.example.csv`:
-
-| Column | Description | Example |
-|---|---|---|
-| `airline` | Airline identifier (`avianca`, `copa`, `satena`) | `avianca` |
-| `reservation_code` | 6-character PNR code | `AV123X` |
-| `last_name` | Passenger primary surname | `GOMEZ HERRERA` |
-| `first_name` | Passenger given name | `ALEJANDRO` |
-| `document_type` | Identification type (`CC`, `PA`, `CE`) | `CC` |
-| `document_number` | Identification number | `1098765432` |
-| `birth_date` | Date of birth (YYYY-MM-DD) | `1992-05-14` |
-| `email` | Notification email address | `passenger@example.com` |
-| `phone` | Contact phone with country code | `+573001234567` |
-| `seat_preference` | Seat preference (`WINDOW`, `AISLE`, `NONE`) | `WINDOW` |
-| `checkin_status` | Status (`PENDING`, `IN_PROGRESS`, `SUCCESS`, `ERROR`) | `PENDING` |
-
----
-
-## Running the Bot
-
-### Standard Playwright Mode (Avianca)
-
-Run in testing mode with browser visible:
-```bash
-npm run dev
-```
-
-Run in production mode (headless, optimized delays):
-```bash
-npm run setup:prod
-npm start
-```
-
-### Autonomous AI Mode (Skyvern)
-
-Run the autonomous AI agent for Copa Airlines:
-```bash
-npm run start:skyvern
-```
-
----
-
-## Docker Deployment
-
-To execute unattended bulk check-in jobs within an isolated container:
+Requisitos: Node.js 22 o superior.
 
 ```bash
-docker compose build
-docker compose up
+npm ci
+npx playwright install chromium
+cp .env.example .env
+cp examples/passengers.example.csv data/passengers.csv   # reemplázalo con tus pasajeros
+
+npm run build
+node dist/cli.js validate     # revisa el manifiesto sin abrir el navegador
+node dist/cli.js run          # hace el check-in de los pendientes
+node dist/cli.js run --airline avianca
 ```
 
-Boarding passes and execution logs will be written to `./boarding_passes` and `./logs` on the host machine.
+Al terminar se imprime un resumen:
 
----
+```text
+Resumen del check-in
+  Pasajeros en el manifiesto: 12
+  Exitosos:                   10
+  Con error:                  1
+  Omitidos:                   1
+  Pasabordos en:              boarding_passes
+```
 
-## Testing
+El código de salida es `0` si todo salió bien, `1` si algún pasajero quedó con error y `2` ante un problema de configuración. Los registros salen en JSON por la salida de errores, sin documentos, correos ni teléfonos.
 
-The project includes an automated test suite executed via the native Node.js test runner:
+### Con Docker
 
 ```bash
-npm test
+cp examples/passengers.example.csv data/passengers.csv
+docker compose run --rm checkin validate
+docker compose run --rm checkin run
 ```
 
-### Test Coverage Highlights:
-- **Validators**: Verifies strict schema compliance, date formats, phone conventions, and uppercase normalization.
-- **Error Classification**: Validates error recovery states, severity tracking, and contextual logging.
-- **Retry Mechanism**: Tests exponential backoff calculation and immediate abort on permanent errors.
-- **Concurrency & Locking**: Ensures file lock acquisition and release safety under multi-worker conditions.
-- **Airline Factory**: Tests dynamic adapter instantiation and interface contracts.
+La imagen parte de la imagen oficial de Playwright, compila TypeScript en una etapa aparte y corre como el usuario sin privilegios `pwuser`. En Linux, las carpetas `data/` y `boarding_passes/` deben permitir escritura al usuario 1000 del contenedor.
 
----
+## El manifiesto
 
-## License
+Copia [`examples/passengers.example.csv`](examples/passengers.example.csv); los datos del ejemplo son ficticios.
 
-This project is licensed under the MIT License.
+| Columna | Ejemplo | Regla |
+| :--- | :--- | :--- |
+| `airline` | `avianca` | `avianca` o `copa` |
+| `reservation_code` | `AV123X` | 5 a 10 letras o números |
+| `last_name`, `first_name` | `GOMEZ HERRERA`, `ALEJANDRO` | Como aparecen en la reserva |
+| `document_type`, `document_number` | `CC`, `1098765432` | `CC`, `CE`, `PA` o `TI` |
+| `document_nationality`, `document_issuing_country` | `Colombia` | Texto del país |
+| `document_expiry_date` | `2031-10-15` | `AAAA-MM-DD`; obligatorio para pasaporte |
+| `birth_date` | `1992-05-14` | `AAAA-MM-DD` |
+| `gender` | `M` | `M`, `F` o `X` |
+| `residence_country`, `visit_purpose` | `Colombia`, `Turismo` | `Turismo`, `Negocios`, `Estudios` o `Transito` |
+| `email`, `phone` | `pasajero@example.com`, `+573001234567` | Correo válido; 7 a 15 dígitos |
+| `emergency_contact_*` | `Mariana Gomez`, `+57`, `3109876543`, `Colombia` | Nombre, indicativo, teléfono y país |
+| `seat_preference` | `WINDOW` | `WINDOW`, `AISLE`, `MIDDLE` o `NONE` |
+
+Las columnas de estado (`checkin_status`, `checkin_date`, `boarding_pass`, `error_code`, `error_message`, `attempt_count`, `last_attempt_date`) las llena el robot. Para reintentar un pasajero después de corregir sus datos, pon su `checkin_status` en `PENDING`.
+
+### Códigos de error
+
+| Código | Se reintenta | Qué hacer |
+| :--- | :---: | :--- |
+| `ERR_INVALID_DATA` | No | Corregir la fila según el mensaje. |
+| `ERR_RESERVATION_NOT_FOUND` | No | Verificar código y apellido con el pasajero. |
+| `ERR_CHECKIN_CLOSED`, `ERR_FLIGHT_CANCELLED` | No | El vuelo no admite check-in web en este momento. |
+| `ERR_PAYMENT_REQUIRED`, `ERR_REQUIRES_DOCUMENTS`, `ERR_CAPTCHA` | No | Terminar el check-in manualmente. El robot nunca paga ni resuelve CAPTCHAs. |
+| `ERR_TIMEOUT`, `ERR_NETWORK` | Sí | El mensaje indica en qué paso se detuvo. |
+| `ERR_BOARDING_PASS_MISSING`, `ERR_AUTOMATION_FAILED`, `ERR_UNKNOWN` | Sí | Revisar la captura en `boarding_passes/errores/`. |
+
+## Copa con Skyvern
+
+1. Levanta un servidor de [Skyvern](https://github.com/Skyvern-AI/skyvern) (local o en la nube) y crea una clave de API.
+2. Configura `SKYVERN_API_URL` y `SKYVERN_API_KEY` en `.env`.
+3. Elige el modo:
+   - `COPA_MODE=task` (por defecto): el robot envía una tarea con todos los datos del pasajero, instrucciones explícitas de no pagar servicios adicionales y un esquema de extracción para saber si el check-in terminó.
+   - `COPA_MODE=workflow`: usa un workflow publicado en Skyvern (`COPA_WORKFLOW_ID=wpid_...`). `node dist/cli.js skyvern-workflows` lista los disponibles. El workflow recibe `reservation_code`, `last_name`, `first_name`, `email`, `phone` y `seat_preference`.
+
+El cliente de Skyvern tiene tiempo límite por petición, reintenta con espera exponencial los errores transitorios y **nunca repite un POST que el servidor pudo haber aceptado**, para no lanzar dos veces el mismo check-in. La clave de API solo se envía al propio servidor de Skyvern, nunca a las URL de descarga de terceros. Un check-in de Copa solo queda exitoso si hay un pasabordo descargado o el agente confirma que está disponible.
+
+## Arquitectura
+
+```text
+src/
+├── domain/          Pasajero (esquema Zod), estados y catálogo de errores
+├── manifest/        Lectura y escritura del CSV con bloqueo y guardado atómico
+├── runner/          Orquestación: qué filas procesar, reintentos y resumen
+├── airlines/
+│   ├── avianca/     Flujo de Playwright por pasos y selectores con alternativas
+│   └── copa/        Peticiones a Skyvern y evaluación del resultado
+├── browser/         Chromium con un contexto aislado por pasajero
+├── skyvern/         Cliente de la API v1 de Skyvern
+├── config.ts        Variables de entorno validadas
+└── app.ts           Comandos run, validate y skyvern-workflows
+```
+
+```mermaid
+flowchart LR
+    CSV[Manifiesto CSV] --> V{Fila válida}
+    V -->|no| E[ERROR con detalle]
+    V -->|sí| R[Runner]
+    R --> A[Avianca con Playwright]
+    R --> C[Copa con Skyvern]
+    A --> P[Pasabordo PNG]
+    C --> F[Pasabordo PDF]
+    A -->|error transitorio| R
+    C -->|error transitorio| R
+    P --> S[SUCCESS en el CSV]
+    F --> S
+```
+
+Cada aerolínea implementa la misma interfaz `AirlineAdapter`, así agregar otra es escribir un adaptador nuevo sin tocar el runner. Los selectores de Avianca viven en un solo archivo, ordenados del más específico al más genérico, y cada paso del flujo tiene nombre para que un error diga exactamente dónde se detuvo.
+
+## Pruebas y calidad
+
+```bash
+npm run lint        # ESLint con reglas estrictas de typescript-eslint
+npm run typecheck   # TypeScript estricto
+npm test            # pruebas unitarias
+npm run test:e2e    # check-in completo con Chromium contra un sitio de prueba
+```
+
+- **87 pruebas unitarias:** validación del manifiesto, clasificación de los mensajes de la aerolínea, bloqueo y guardado del CSV, reglas de reintento del runner, cliente de Skyvern contra un servidor HTTP local (sondeo, reintentos, tiempo límite y que la clave no salga a otros dominios), adaptador de Copa y comandos de la consola.
+- **6 pruebas de punta a punta** con Chromium contra una réplica local del check-in de Avianca con los mismos componentes de Angular Material. Verifican campo por campo lo que el robot escribió, el pasajero ya registrado, la reserva inexistente, el documento rechazado, el pasabordo que nunca carga y una ejecución completa del comando `run` sobre un CSV.
+- CI en Node 22 y 24, construcción de la imagen Docker con Chromium como `pwuser` y Dependabot.
+
+## Uso responsable
+
+Este robot hace lo mismo que haría un asesor en el navegador, a ritmo humano y con una pausa entre pasajeros. No evade sistemas antibots, no resuelve CAPTCHAs y no paga servicios. Úsalo solo con reservas de pasajeros que te autorizaron a hacer su check-in y revisa los términos de uso de cada aerolínea. Los manifiestos y los pasabordos contienen datos personales: la carpeta `data/` y `boarding_passes/` están fuera del control de versiones.
+
+## Historia del proyecto
+
+La primera versión (junio de 2026) fue un robot en JavaScript para Avianca con Playwright y un plugin de evasión; en octubre se sumó un segundo robot para Copa con Skyvern. Cada uno tenía su propia configuración, registro y lectura del CSV, y el flujo de Avianca dependía de esperas fijas y de textos de un vuelo concreto para detectar el pasabordo. En noviembre de 2026 lo reescribí en TypeScript estricto como una sola herramienta: manifiesto validado y reanudable, catálogo de errores, reintentos solo donde tienen sentido, un cliente de Skyvern seguro, pruebas de punta a punta y despliegue en contenedor. La versión original queda en la etiqueta `v0.1-legacy`.
+
+## Autor
+
+**Kevin Andrey Herrera Silva**, desarrollador backend. [GitHub](https://github.com/KevinAndrey96)
+
+## Licencia
+
+[MIT](LICENSE)

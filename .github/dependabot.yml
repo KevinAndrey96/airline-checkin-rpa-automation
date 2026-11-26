@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ["*"]
+        exclude-patterns: ["playwright"]
+        update-types: [minor, patch]
+    # Playwright must match the Docker base image; bump both together by hand.
+    ignore:
+      - dependency-name: playwright
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
+    ignore:
+      - dependency-name: mcr.microsoft.com/playwright
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
